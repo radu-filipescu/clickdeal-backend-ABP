@@ -12,6 +12,8 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using clickdeal.Reviews;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace clickdeal.EntityFrameworkCore;
 
@@ -24,6 +26,8 @@ public class clickdealDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+
+    public DbSet<Review> Reviews { get; set; }
 
     #region Entities from the modules
 
@@ -82,5 +86,13 @@ public class clickdealDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<Review>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "Reviews",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Title).IsRequired().HasMaxLength(128);
+        });
     }
 }
