@@ -10,9 +10,11 @@ namespace clickdeal.Products
 
         public double Price { get; set; }
 
-        public string Image { get; set; }
+        public string Image { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
+
+        public string Brand { get; set; } = string.Empty;
 
         // all the product's categories, separated by #
         public string Categories { get; set; } = string.Empty;

@@ -40,6 +40,8 @@ namespace clickdeal.Reviews
 
         public async Task<IEnumerable<ReviewDTO>> GetReviewsForProduct(Guid productId)
         {
+            // TODO: only return approved reviews for the product
+
             var result = await _reviewsRepository.GetListAsync(review => review.ProductId == productId);
 
             var mappedResult = ObjectMapper.Map<List<Review>, List<ReviewDTO>>(result);
@@ -70,5 +72,7 @@ namespace clickdeal.Reviews
         {
             return await base.GetAsync(id);
         }
+
+        // TODO: Get reviews of certain User (to show in his profile)
     }
 }

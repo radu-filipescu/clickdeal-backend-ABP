@@ -11,6 +11,8 @@ public class Product : AuditedAggregateRoot<Guid>
 
     public string Description { get; set; } = string.Empty;
 
+    public string Brand { get; set; } = string.Empty;
+
     public string PhotoPath { get; set; } = string.Empty;
 
     public string PhotoPathSmall { get; set; } = string.Empty;

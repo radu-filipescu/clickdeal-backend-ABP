@@ -15,6 +15,8 @@ namespace clickdeal.Products
 
         public string Description { get; set; } = string.Empty;
 
+        public string Brand { get; set; } = string.Empty;
+
         // all the product's categories, separated by #
         public string Categories { get; set; } = string.Empty;
 

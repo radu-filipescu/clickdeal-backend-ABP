@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace clickdeal.Products
 {
@@ -38,6 +40,38 @@ namespace clickdeal.Products
         public override async Task<PagedResultDto<ProductDTO>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             return await base.GetListAsync(input);
+        }
+
+        [Authorize("clickdeal.User")]
+        public async Task<List<ProductDTO>> GetProductsFiltered(FilteredProductsRequestDTO input)
+        {
+            // filtering products
+            
+            var entities = await _productsRepository.GetQueryableAsync();
+
+            if(input.PriceMin != null)
+                entities.Where(product => product.Price >= input.PriceMin);
+
+            if (input.PriceMax != null)
+                entities.Where(product => product.Price <= input.PriceMax);
+
+            if(input.Brand != null) 
+                entities.Where(product => product.Brand ==  input.Brand);
+
+            if(input.Category != null && input.Category.Length > 0)
+                entities.Where(product => product.Categories.Contains(input.Category));
+
+            if(input.SkipCount > 0)
+                entities.Skip(input.SkipCount);
+
+            if(input.MaxResultCount > 0)
+                entities.Take(input.MaxResultCount);
+
+            var result = entities.ToList();
+
+            var mappedResult = ObjectMapper.Map<List<Product>, List<ProductDTO>>(result);
+
+            return mappedResult;
         }
 
         [Authorize("clickdeal.Admin")]
