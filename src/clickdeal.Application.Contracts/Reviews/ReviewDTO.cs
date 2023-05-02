@@ -8,6 +8,7 @@ namespace clickdeal.Reviews
     public class ReviewDTO : AuditedEntityDto<Guid>
     {
         public Guid ProductId { get; set; }
+        public Guid UserId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public int NumberOfStars { get; set; }
