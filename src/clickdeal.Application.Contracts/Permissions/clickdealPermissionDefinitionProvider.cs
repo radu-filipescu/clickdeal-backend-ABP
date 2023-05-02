@@ -11,6 +11,9 @@ public class clickdealPermissionDefinitionProvider : PermissionDefinitionProvide
         var myGroup = context.AddGroup(clickdealPermissions.GroupName);
         //Define your own permissions here. Example:
         //myGroup.AddPermission(clickdealPermissions.MyPermission1, L("Permission:MyPermission1"));
+
+        var userPermissions = myGroup.AddPermission(clickdealPermissions.Roles.User, L("Permission:User"));
+        var adminPermissions = myGroup.AddPermission(clickdealPermissions.Roles.Admin, L("Permission:Admin"));
     }
 
     private static LocalizableString L(string name)

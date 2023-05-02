@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Identity;
+using Volo.Abp.Validation;
 
 namespace clickdeal.Reviews
 {
@@ -21,7 +25,12 @@ namespace clickdeal.Reviews
         public ReviewAppService(IRepository<Review, Guid> repository)
         : base(repository)
         {
+        }
 
+        [Authorize]
+        public async override Task<ReviewDTO> CreateAsync(CreateUpdateReviewDTO input)
+        {
+            return await base.CreateAsync(input);
         }
     }
 }

@@ -6,4 +6,10 @@ public static class clickdealPermissions
 
     //Add your own permission names. Example:
     //public const string MyPermission1 = GroupName + ".MyPermission1";
+
+    public static class Roles
+    {
+        public const string User = GroupName + ".User";
+        public const string Admin = GroupName + ".Admin";
+    }
 }
