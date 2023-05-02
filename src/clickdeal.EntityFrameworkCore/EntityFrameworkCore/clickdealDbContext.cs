@@ -14,6 +14,8 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using clickdeal.Reviews;
 using Volo.Abp.EntityFrameworkCore.Modeling;
+using clickdeal.Products;
+using clickdeal.ProductStocks;
 
 namespace clickdeal.EntityFrameworkCore;
 
@@ -28,6 +30,8 @@ public class clickdealDbContext :
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
 
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<ProductStock> ProductsStock { get; set; }
 
     #region Entities from the modules
 
@@ -93,6 +97,22 @@ public class clickdealDbContext :
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.Title).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<Product>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "Products",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<ProductStock>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "ProductsStock",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.ProductId).IsRequired().HasMaxLength(128);
         });
     }
 }
