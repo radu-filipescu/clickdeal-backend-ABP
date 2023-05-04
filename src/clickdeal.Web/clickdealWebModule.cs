@@ -37,6 +37,9 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace clickdeal.Web;
 
@@ -89,9 +92,10 @@ public class clickdealWebModule : AbpModule
         {
             options.AddPolicy("AllowAnyOrigin", builder =>
             {
-                builder.AllowAnyOrigin()
+                builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500", "https://localhost:5501", "https://127.0.0.1:5501")
                        .AllowAnyHeader()
-                       .AllowAnyMethod();
+                       .AllowAnyMethod()
+                       .AllowCredentials();
             });
         });
         // other service configurations...
@@ -193,7 +197,8 @@ public class clickdealWebModule : AbpModule
 
         if (env.IsDevelopment())
         {
-            app.UseDeveloperExceptionPage();
+            //app.UseDeveloperExceptionPage();
+            app.UseExceptionHandler("/Error");
         }
 
         app.UseAbpRequestLocalization();
@@ -208,6 +213,19 @@ public class clickdealWebModule : AbpModule
         app.UseRouting();
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
+
+
+
+        app.UseExceptionHandler(errorApp =>
+        {
+            errorApp.Run(async context =>
+            {
+                context.Response.ContentType = "application/json";
+                var error = context.Features.Get<IExceptionHandlerFeature>().Error;
+                var result = JsonSerializer.Serialize(new { error = error.Message });
+                await context.Response.WriteAsync(result);
+            });
+        });
 
         if (MultiTenancyConsts.IsEnabled)
         {
