@@ -16,6 +16,7 @@ using clickdeal.Reviews;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 using clickdeal.Products;
 using clickdeal.ProductStocks;
+using clickdeal.Categories;
 
 namespace clickdeal.EntityFrameworkCore;
 
@@ -32,6 +33,7 @@ public class clickdealDbContext :
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductStock> ProductsStock { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     #region Entities from the modules
 
@@ -113,6 +115,22 @@ public class clickdealDbContext :
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.ProductId).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<ProductStock>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "ProductsStock",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.ProductId).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<Category>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "Categories",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
         });
     }
 }

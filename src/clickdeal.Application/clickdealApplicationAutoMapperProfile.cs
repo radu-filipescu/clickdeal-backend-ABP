@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using clickdeal.Categories;
 using clickdeal.Products;
 using clickdeal.ProductsStock;
 using clickdeal.ProductStocks;
@@ -21,5 +22,8 @@ public class clickdealApplicationAutoMapperProfile : Profile
 
         CreateMap<ProductStock, ProductStockDTO>();
         CreateMap<CreateUpdateProductStockDTO, ProductStock>();
+
+        CreateMap<Category, CategoryDTO>();
+        CreateMap<CreateUpdateCategoryDTO, Category>();
     }
 }

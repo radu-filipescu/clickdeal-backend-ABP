@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using clickdeal.Products;
 using clickdeal.Reviews;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 
-namespace Acme.BookStore;
-public class ProductDataSeeder
-    : IDataSeedContributor, ITransientDependency
+namespace clickdeal.Products;
+public class ProductDataSeeder : IDataSeedContributor, ITransientDependency
 {
     private readonly IRepository<Product, Guid> _productRepository;
 
