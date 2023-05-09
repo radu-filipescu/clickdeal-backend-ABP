@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using clickdeal.MultiTenancy;
 using Volo.Abp.AuditLogging;
@@ -14,6 +14,7 @@ using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.BlobStoring.FileSystem;
 
 namespace clickdeal;
 
@@ -30,7 +31,8 @@ namespace clickdeal;
     typeof(AbpTenantManagementDomainModule),
     typeof(AbpEmailingModule)
 )]
-public class clickdealDomainModule : AbpModule
+[DependsOn(typeof(AbpBlobStoringFileSystemModule))]
+    public class clickdealDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
