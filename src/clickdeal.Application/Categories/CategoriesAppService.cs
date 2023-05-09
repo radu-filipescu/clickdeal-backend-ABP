@@ -1,5 +1,6 @@
 ﻿using clickdeal.Products;
 using Microsoft.AspNetCore.Authorization;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,12 +29,61 @@ namespace clickdeal.Categories
             _categoriesRepository = repository;
         }
 
-        [Authorize("clickdeal.Admin")]
+        //[Authorize("clickdeal.Admin")]
         public async override Task<CategoryDTO> CreateAsync(CreateUpdateCategoryDTO input)
         {
-            // TODO: implement creating category with subcategories
+            var newCategory = new Category();
 
-            return await base.CreateAsync(input);
+            if(input.Name == null || input.Name.Length == 0)
+            {
+                return new CategoryDTO();
+            }
+            
+            newCategory.Name = input.Name;
+
+            if(input.PhotoBase64 != null && input.PhotoBase64.Length > 0)
+            {
+                newCategory.PhotoBase64 = input.PhotoBase64;
+            }
+
+            if(input.Subcategories != null && input.Subcategories.Length > 0)
+            {
+                newCategory.Subcategories = input.Subcategories;
+            }
+
+            Category? foundParent = null;
+
+            if(input.ParentGuid != null)
+            {
+                // check if parent exists
+                foundParent = await _categoriesRepository.FirstOrDefaultAsync(category => category.Id == input.ParentGuid);
+
+                if(foundParent == null)
+                {
+                    input.ParentGuid = null;
+                }
+            }
+
+            newCategory.ParentGuid = input.ParentGuid;
+            newCategory.ProductsNumber = 0;
+            newCategory.Visible = true;
+
+            var result = await _categoriesRepository.InsertAsync(newCategory);
+             
+            // if there's a valid GUID as parent, update his children to include the new category
+            if(foundParent != null)
+            {
+                foundParent.Subcategories  += result.Id + "#";
+
+                await _categoriesRepository.UpdateAsync(foundParent);
+            }
+
+            // success
+            return new CategoryDTO
+            {
+                Id = result.Id,
+                Name = result.Name
+            };
         }
 
         [Authorize("clickdeal.Admin")]
