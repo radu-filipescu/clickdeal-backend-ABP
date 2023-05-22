@@ -25,7 +25,8 @@ public class ProductDataSeeder : IDataSeedContributor, ITransientDependency
                 {
                     Name = "suport auto telefon",
                     Price = 50,
-                    Description = "suport de lipit pe parbriz pentru telefonul tau",
+                    DescriptionShort = "suport de lipit pe parbriz pentru telefonul tau",
+                    DescriptionLong = "",
                     PhotoPath = "nah",
                     PhotoPathSmall = "nah-small",
                     Categories = "auto#electronice#telefoane",

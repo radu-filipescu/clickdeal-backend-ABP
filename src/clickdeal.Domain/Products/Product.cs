@@ -9,7 +9,12 @@ public class Product : AuditedAggregateRoot<Guid>
 
     public double Price { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+    public string DescriptionShort { get; set; } = string.Empty;
+
+    public string DescriptionLong { get; set; } = string.Empty;
+
+    // information table with this convention  key:value  title*
+    public string Information { get; set; } = string.Empty;
 
     public string Brand { get; set; } = string.Empty;
 

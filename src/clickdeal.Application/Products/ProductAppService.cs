@@ -1,6 +1,7 @@
 ﻿using clickdeal.Categories;
 using clickdeal.Reviews;
 using Microsoft.AspNetCore.Authorization;
+using Polly.Caching;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,7 +45,9 @@ namespace clickdeal.Products
             Product newProduct = new Product();
 
             newProduct.Name = input.Name;
-            newProduct.Description = input.Description;
+            newProduct.DescriptionShort = input.DescriptionShort;
+            newProduct.DescriptionLong = input.DescriptionLong;
+            newProduct.Information = input.Information;
             newProduct.Price = input.Price;
             newProduct.Brand = input.Brand;
             
@@ -97,7 +100,7 @@ namespace clickdeal.Products
 
             response.Id = result.Id;
             response.Name = result.Name;
-            response.Description = result.Description;
+            response.DescriptionShort = result.DescriptionShort;
             response.Price = result.Price;
             response.Brand = result.Brand;
 
@@ -110,6 +113,60 @@ namespace clickdeal.Products
             // THIS IS DISABLED
             
             return await base.GetListAsync(input);
+        }
+
+        public class ProductsCountResponse
+        {
+            public int Value { get; set; }
+        }
+
+        public async Task<ProductsCountResponse> GetProductsCountWithFilters(FilteredProductsRequestDTO input)
+        {
+            // filtering products
+
+            var entitiesQuery = await _productsRepository.GetQueryableAsync();
+
+            if (input.PriceMin != null)
+                entitiesQuery = entitiesQuery.Where(product => product.Price >= input.PriceMin);
+
+            if (input.PriceMax != null)
+                entitiesQuery = entitiesQuery.Where(product => product.Price <= input.PriceMax);
+
+            if (input.Brand != null)
+                entitiesQuery = entitiesQuery.Where(product => product.Brand == input.Brand);
+
+            if (input.Category != null && input.Category.Length > 0)
+                entitiesQuery = entitiesQuery.Where(product => product.Categories.Contains(input.Category));
+
+            if (input.OrderBy != null && input.OrderBy.Length > 0)
+            {
+                if (input.OrderBy == "DATE-ASC")
+                    entitiesQuery = entitiesQuery.OrderBy(product => product.CreationTime);
+
+                if (input.OrderBy == "DATE-DESC")
+                    entitiesQuery = entitiesQuery.OrderByDescending(product => product.CreationTime);
+
+                if (input.OrderBy == "PRICE-ASC")
+                    entitiesQuery = entitiesQuery.OrderBy(product => product.Price);
+
+                if (input.OrderBy == "PRICE-DESC")
+                    entitiesQuery = entitiesQuery.OrderByDescending(product => product.Price);
+            }
+
+            if (input.SkipCount > 0)
+                entitiesQuery = entitiesQuery.Skip(input.SkipCount);
+
+            if (input.MaxResultCount > 0)
+                entitiesQuery = entitiesQuery.Take(input.MaxResultCount);
+
+            var result = entitiesQuery.ToList();
+
+            var mappedResult = ObjectMapper.Map<List<Product>, List<ProductDTO>>(result);
+
+            return new ProductsCountResponse
+            {
+                Value = mappedResult.Count
+            };
         }
 
         public async Task<List<ProductDTO>> GetProductsFiltered(FilteredProductsRequestDTO input)
@@ -157,8 +214,9 @@ namespace clickdeal.Products
 
             foreach(var product in mappedResult)
             {
-                var productImage = await _blobContainer.GetAllBytesOrNullAsync(product.Id.ToString());
+                product.ProductId = product.Id.ToString();
 
+                var productImage = await _blobContainer.GetAllBytesOrNullAsync(product.Id.ToString());
                 if (productImage == null)
                     continue;
 
@@ -183,7 +241,37 @@ namespace clickdeal.Products
         [Authorize("clickdeal.Admin")]
         public override async Task<ProductDTO> GetAsync(Guid id)
         {
+            // DISABLED
             return await base.GetAsync(id);
+        }
+
+        public class ProductsDetailInput
+        {
+            public string ProductId { get; set; } = string.Empty;
+        }
+
+        public async Task<ProductDTO?> GetProductDetailsAsync(ProductsDetailInput input)
+        {
+            Guid productGuid;
+
+            bool valid = Guid.TryParse(input.ProductId, out productGuid);
+
+            if (!valid)
+                return null;
+
+            var result = await base.GetAsync(productGuid);
+
+            if (result == null)
+                return new ProductDTO();
+
+            if (result != null)
+            {
+                var productImage = await _blobContainer.GetAllBytesOrNullAsync(input.ProductId);
+                if (productImage != null)
+                    result.Image = System.Text.Encoding.UTF8.GetString(productImage);
+            }
+
+            return result;
         }
     }
 
