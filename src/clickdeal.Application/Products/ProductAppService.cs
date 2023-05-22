@@ -112,7 +112,6 @@ namespace clickdeal.Products
             return await base.GetListAsync(input);
         }
 
-        [Authorize("clickdeal.User")]
         public async Task<List<ProductDTO>> GetProductsFiltered(FilteredProductsRequestDTO input)
         {
             // filtering products
