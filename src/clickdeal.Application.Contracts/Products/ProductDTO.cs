@@ -11,7 +11,7 @@ namespace clickdeal.Products
 
         public double Price { get; set; }
 
-        public string Image { get; set; }
+        public string Image { get; set; } = string.Empty;
 
         public string Description { get; set; } = string.Empty;
 

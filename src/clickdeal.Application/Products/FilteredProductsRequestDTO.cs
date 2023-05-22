@@ -16,5 +16,12 @@ namespace clickdeal.Products
         public string? Category { get; set; }
         public string? Brand { get; set; }
 
+        // expects something from:
+        // 1. DATE-ASC
+        // 2. DATE-DESC
+        // 3. PRICE-ASC
+        // 4. PRICE-DESC
+        public string? OrderBy { get; set; }
+
     }
 }

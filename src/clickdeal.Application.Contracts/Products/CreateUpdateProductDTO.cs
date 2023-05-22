@@ -16,7 +16,7 @@ namespace clickdeal.Products
 
         public string Brand { get; set; } = string.Empty;
 
-        // all the product's categories, separated by #
+        // all the product's categories names, starting and ending with #, and separated by #
         public string Categories { get; set; } = string.Empty;
 
         // serialized JSON holding different characteristics of the product

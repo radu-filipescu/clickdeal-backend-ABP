@@ -15,6 +15,7 @@ using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.BlobStoring.FileSystem;
+using Volo.Abp.BlobStoring;
 
 namespace clickdeal;
 
@@ -61,6 +62,18 @@ namespace clickdeal;
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
+        });
+
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.ConfigureDefault(container =>
+            {
+                container.UseFileSystem(fileSystem =>
+                {
+                    // TODO: change for production
+                    fileSystem.BasePath = "~/Storage/";
+                });
+            });
         });
 
 #if DEBUG
