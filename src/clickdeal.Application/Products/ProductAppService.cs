@@ -187,6 +187,10 @@ namespace clickdeal.Products
             if(input.Category != null && input.Category.Length > 0)
                 entitiesQuery = entitiesQuery.Where(product => product.Categories.Contains(input.Category));
 
+            if (input.MinDiscount != null && input.MinDiscount > 0.5)
+                entitiesQuery = entitiesQuery.Where(product => product.PriceDiscount >= input.MinDiscount);
+
+
             if(input.OrderBy != null && input.OrderBy.Length > 0)
             {
                 if (input.OrderBy == "DATE-ASC")

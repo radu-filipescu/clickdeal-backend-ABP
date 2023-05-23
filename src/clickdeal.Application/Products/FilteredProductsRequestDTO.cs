@@ -12,6 +12,8 @@ namespace clickdeal.Products
         public int? PriceMin { get; set; }
         public int? PriceMax { get; set; }
 
+        public double? MinDiscount { get; set; }
+
         // single category for now
         public string? Category { get; set; }
         public string? Brand { get; set; }

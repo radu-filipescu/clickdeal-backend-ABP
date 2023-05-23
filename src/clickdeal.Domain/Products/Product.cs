@@ -9,6 +9,8 @@ public class Product : AuditedAggregateRoot<Guid>
 
     public double Price { get; set; }
 
+    public double PriceDiscount { get; set; }
+
     public string DescriptionShort { get; set; } = string.Empty;
 
     public string DescriptionLong { get; set; } = string.Empty;
