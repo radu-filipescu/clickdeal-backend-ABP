@@ -88,12 +88,12 @@ public class clickdealWebModule : AbpModule
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
 
-        context.Services.AddAntiforgery(options =>
-        {
-            options.HeaderName = "X-XSRF-TOKEN";
-            options.Cookie.Name = "XSRF-TOKEN";
-            options.Cookie.HttpOnly = false;
-        });
+        //context.Services.AddAntiforgery(options =>
+        //{
+        //    options.HeaderName = "X-XSRF-TOKEN";
+        //    options.Cookie.Name = "XSRF-TOKEN";
+        //    options.Cookie.HttpOnly = false;
+        //});
 
         context.Services.AddCors(options =>
         {
