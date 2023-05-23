@@ -45,7 +45,6 @@ namespace clickdeal.UserProfile
             public bool Result { get; set; }
         }
 
-        [Authorize("clickdeal.User")]
         [IgnoreAntiforgeryToken]
         public async Task<EditUserProfileResponseDTO> EditUserProfile(EditUserProfileDTO input)
         {

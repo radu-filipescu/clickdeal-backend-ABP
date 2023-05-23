@@ -33,7 +33,7 @@ namespace clickdeal.Reviews
             _reviewsRepository = repository;
         }
 
-        [Authorize("clickdeal.User")]
+        [Authorize]
         [IgnoreAntiforgeryToken]
         public async override Task<ReviewDTO> CreateAsync(CreateUpdateReviewDTO input)
         {
