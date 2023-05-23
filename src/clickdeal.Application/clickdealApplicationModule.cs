@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Account;
+﻿using System;
+using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -23,7 +24,6 @@ public class clickdealApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        
         Configure<AbpAutoMapperOptions>(options =>
         {
             options.AddMaps<clickdealApplicationModule>();

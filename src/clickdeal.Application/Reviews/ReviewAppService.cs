@@ -35,7 +35,17 @@ namespace clickdeal.Reviews
         [Authorize("clickdeal.User")]
         public async override Task<ReviewDTO> CreateAsync(CreateUpdateReviewDTO input)
         {
-            return await base.CreateAsync(input);
+            Review newReview = new Review();
+
+            newReview.ReviewUsername = input.ReviewUsername;
+            newReview.Title = "";
+            newReview.Content = input.Content;
+            newReview.NumberOfStars = input.NumberOfStars;
+            newReview.ProductId = input.ProductId;
+
+            var result = await _reviewsRepository.InsertAsync(newReview);
+
+            return new ReviewDTO();
         }
 
         public async Task<IEnumerable<ReviewDTO>> GetReviewsForProduct(Guid productId)
