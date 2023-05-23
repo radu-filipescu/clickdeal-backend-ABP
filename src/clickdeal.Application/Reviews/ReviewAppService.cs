@@ -1,5 +1,6 @@
 ﻿using clickdeal.Permissions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -33,6 +34,7 @@ namespace clickdeal.Reviews
         }
 
         [Authorize("clickdeal.User")]
+        [IgnoreAntiforgeryToken]
         public async override Task<ReviewDTO> CreateAsync(CreateUpdateReviewDTO input)
         {
             Review newReview = new Review();
