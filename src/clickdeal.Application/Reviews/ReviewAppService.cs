@@ -50,15 +50,38 @@ namespace clickdeal.Reviews
             return new ReviewDTO();
         }
 
-        public async Task<IEnumerable<ReviewDTO>> GetReviewsForProduct(Guid productId)
+        public class ProductReviewsByIdDTO
+        {
+            public string productId { get; set; } = string.Empty;
+        }
+
+        public async Task<IEnumerable<ReviewDTO>> GetReviewsForProduct(ProductReviewsByIdDTO input)
         {
             // TODO: only return approved reviews for the product
 
+            Guid productId;
+            bool valid = Guid.TryParse(input.productId, out productId);
+
+            if (!valid)
+                return null;
+
             var result = await _reviewsRepository.GetListAsync(review => review.ProductId == productId);
 
-            var mappedResult = ObjectMapper.Map<List<Review>, List<ReviewDTO>>(result);
 
-            return mappedResult;
+            List<ReviewDTO> resultDTOs = new List<ReviewDTO>();
+
+            foreach(var review in result)
+            {
+                resultDTOs.Add(new ReviewDTO
+                {
+                    Username = review.ReviewUsername,
+                    Content = review.Content,
+                    NumberOfStars = review.NumberOfStars,
+                    Date = review.CreationTime.ToShortDateString(),
+                });
+            }
+
+            return resultDTOs;
         }
 
         [Authorize("clickdeal.Admin")]
