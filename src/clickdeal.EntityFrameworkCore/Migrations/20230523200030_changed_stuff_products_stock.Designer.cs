@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using clickdeal.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using clickdeal.EntityFrameworkCore;
 namespace clickdeal.Migrations
 {
     [DbContext(typeof(clickdealDbContext))]
-    partial class clickdealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523200030_changed_stuff_products_stock")]
+    partial class changedstuffproductsstock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1731,227 +1734,6 @@ namespace clickdeal.Migrations
                     b.ToTable("AppCategories", (string)null);
                 });
 
-            modelBuilder.Entity("clickdeal.Orders.CustomerOrder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Adress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("BillingAdress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CustomerNotes")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<double>("DeliveryCost")
-                        .HasColumnType("double");
-
-                    b.Property<string>("ExtraProperties")
-                        .HasColumnType("longtext")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PromoCode")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ShippingMethod")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<double>("TotalCost")
-                        .HasColumnType("double");
-
-                    b.Property<string>("TrackingNumber")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppOrdersHistory", (string)null);
-                });
-
-            modelBuilder.Entity("clickdeal.Orders.PendingOrder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Adress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("BillingAdress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("varchar(128)");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("CustomerNotes")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<double>("DeliveryCost")
-                        .HasColumnType("double");
-
-                    b.Property<string>("ExtraProperties")
-                        .HasColumnType("longtext")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PromoCode")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ShippingMethod")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<double>("TotalCost")
-                        .HasColumnType("double");
-
-                    b.Property<string>("TrackingNumber")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppPendingOrders", (string)null);
-                });
-
-            modelBuilder.Entity("clickdeal.Orders.UserOrderEntry", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid?>("CustomerOrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("ExtraProperties")
-                        .HasColumnType("longtext")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<Guid?>("PendingOrderId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<double>("PricePerUnit")
-                        .HasColumnType("double");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("ProductSpecs")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("StockId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerOrderId");
-
-                    b.HasIndex("PendingOrderId");
-
-                    b.ToTable("UserOrderEntry");
-                });
-
             modelBuilder.Entity("clickdeal.ProductStocks.ProductStock", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2284,17 +2066,6 @@ namespace clickdeal.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("clickdeal.Orders.UserOrderEntry", b =>
-                {
-                    b.HasOne("clickdeal.Orders.CustomerOrder", null)
-                        .WithMany("OrderEntries")
-                        .HasForeignKey("CustomerOrderId");
-
-                    b.HasOne("clickdeal.Orders.PendingOrder", null)
-                        .WithMany("OrderEntries")
-                        .HasForeignKey("PendingOrderId");
-                });
-
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
                 {
                     b.Navigation("Actions");
@@ -2333,16 +2104,6 @@ namespace clickdeal.Migrations
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
                 {
                     b.Navigation("ConnectionStrings");
-                });
-
-            modelBuilder.Entity("clickdeal.Orders.CustomerOrder", b =>
-                {
-                    b.Navigation("OrderEntries");
-                });
-
-            modelBuilder.Entity("clickdeal.Orders.PendingOrder", b =>
-                {
-                    b.Navigation("OrderEntries");
                 });
 #pragma warning restore 612, 618
         }

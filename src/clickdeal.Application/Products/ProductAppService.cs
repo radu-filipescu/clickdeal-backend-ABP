@@ -213,14 +213,30 @@ namespace clickdeal.Products
                 entitiesQuery = entitiesQuery.Take(input.MaxResultCount);
 
             var result = entitiesQuery.ToList();
+            List<ProductDTO> mappedResult = new List<ProductDTO>();
 
-            var mappedResult = ObjectMapper.Map<List<Product>, List<ProductDTO>>(result);
+            foreach (var prod in result)
+            {
+                ProductDTO newProductDTO = new ProductDTO();
+
+                newProductDTO.Name = prod.Name;
+                newProductDTO.Price = prod.Price;
+                newProductDTO.PriceDiscount = prod.PriceDiscount;
+                newProductDTO.ProductId = prod.Id.ToString();
+                newProductDTO.DescriptionShort = prod.DescriptionShort;
+                newProductDTO.DescriptionLong = prod.DescriptionLong;
+                newProductDTO.Information = prod.Information;
+                newProductDTO.Brand = prod.Brand;
+                newProductDTO.Categories = prod.Categories;
+                newProductDTO.Specs = prod.Specs;
+
+                mappedResult.Add(newProductDTO);
+            }
+
 
             foreach(var product in mappedResult)
             {
-                product.ProductId = product.Id.ToString();
-
-                var productImage = await _blobContainer.GetAllBytesOrNullAsync(product.Id.ToString());
+                var productImage = await _blobContainer.GetAllBytesOrNullAsync(product.ProductId.ToString());
                 if (productImage == null)
                     continue;
 

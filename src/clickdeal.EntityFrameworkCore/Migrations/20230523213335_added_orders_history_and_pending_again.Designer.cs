@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using clickdeal.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using clickdeal.EntityFrameworkCore;
 namespace clickdeal.Migrations
 {
     [DbContext(typeof(clickdealDbContext))]
-    partial class clickdealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230523213335_added_orders_history_and_pending_again")]
+    partial class addedordershistoryandpendingagain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1939,9 +1942,6 @@ namespace clickdeal.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("StockId")
-                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 

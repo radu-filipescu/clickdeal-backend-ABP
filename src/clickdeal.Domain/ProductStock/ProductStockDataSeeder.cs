@@ -24,7 +24,6 @@ public class BookStoreDataSeederContributor
                 new ProductStock
                 {
                     ProductId = Guid.NewGuid(),
-                    ReservedUnits = 5,
                     TotalUnits = 500
                 },
                 autoSave: true

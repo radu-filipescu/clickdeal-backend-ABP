@@ -17,6 +17,7 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using clickdeal.Products;
 using clickdeal.ProductStocks;
 using clickdeal.Categories;
+using clickdeal.Orders;
 
 namespace clickdeal.EntityFrameworkCore;
 
@@ -34,6 +35,8 @@ public class clickdealDbContext :
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductStock> ProductsStock { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<PendingOrder> PendingOrders { get; set; }
+    public DbSet<CustomerOrder> OrdersHistory { get; set; }
 
     #region Entities from the modules
 
@@ -131,6 +134,22 @@ public class clickdealDbContext :
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<PendingOrder>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "PendingOrders",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.CustomerEmail).IsRequired().HasMaxLength(128);
+        });
+
+        builder.Entity<CustomerOrder>(b =>
+        {
+            b.ToTable(clickdealConsts.DbTablePrefix + "OrdersHistory",
+                clickdealConsts.DbSchema);
+            b.ConfigureByConvention(); //auto configure for the base class props
+            b.Property(x => x.CustomerEmail).IsRequired().HasMaxLength(128);
         });
     }
 }
