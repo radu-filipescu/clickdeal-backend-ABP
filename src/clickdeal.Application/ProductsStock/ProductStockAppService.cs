@@ -122,9 +122,11 @@ namespace clickdeal.ProductsStock
         public class CheckoutCartResponse
         {
             public bool Success { get; set; }
-            public List<string> ProductIdsOutOfStock { get; set; } = new List<string>();
 
-            public bool UserAlreadyHasPendingOrder;
+            // convention ProductId + "#" + Specs
+            public List<string> ProductIdsAndSpecsOutOfStock { get; set; } = new List<string>();
+
+            public bool UserAlreadyHasPendingOrder { get; set; }
         }
 
         [IgnoreAntiforgeryToken]
@@ -161,12 +163,30 @@ namespace clickdeal.ProductsStock
             if (_currentUser.IsAuthenticated)
             {
                 // if username is empty there's something sketchy
-                if(input.Username.IsNullOrEmpty())
+                if (input.Username.IsNullOrEmpty())
                     return badResponse;
 
                 // if user is authenticated and DTO with userId is empty or doesn't match there's something sketchy
                 if (input.Username != _currentUser.UserName)
                     return badResponse;
+
+                // if user is authenticated and he has another pending order => not ok
+                var pendingSame = await _pendingOrdersRepository.FirstOrDefaultAsync(pendingOrder => pendingOrder.UserId == _currentUser.Id);
+                if (pendingSame != null)
+                {
+                    badResponse.UserAlreadyHasPendingOrder = true;
+                    return badResponse;
+                }
+            }
+            else
+            {
+                // if user is not authenticated and he has another pending order => not ok
+                var pendingSame = await _pendingOrdersRepository.FirstOrDefaultAsync(pendingOrder => pendingOrder.CustomerName == input.OrderEmail);
+                if (pendingSame != null)
+                {
+                    badResponse.UserAlreadyHasPendingOrder = true;
+                    return badResponse;
+                }
             }
 
             // now we check if the client's products are available
@@ -185,12 +205,20 @@ namespace clickdeal.ProductsStock
                 if (cartEntry == null)
                     return badResponse;
 
+                (ProductStock, int)? isEnoughAvailable = null;
+
                 // check if the product with those specs is available
-                var isEnoughAvailable = await IsProductAvailableInternal(cartEntry);
+                try {
+                    isEnoughAvailable = await IsProductAvailableInternal(cartEntry);
+                }
+                catch (Exception ex)
+                {
+                    var res = ex;
+                }
 
                 if (isEnoughAvailable == null)
                 {
-                    badResponse.ProductIdsOutOfStock.Add(cartEntry.ProductId);
+                    badResponse.ProductIdsAndSpecsOutOfStock.Add(cartEntry.ProductId + "#" + cartEntry.Specs);
                     notEnough = true;
                 }
                 else
@@ -223,7 +251,7 @@ namespace clickdeal.ProductsStock
 
                 // find pricePerUnit of that product
                 var foundProduct = await _productsRepository.FirstOrDefaultAsync(product => product.Id == newPendingEntry.ProductId && 
-                                                                            product.AreSpecsEqual(product.Specs, newPendingEntry.ProductSpecs));
+                                                                            Product.AreSpecsEqual(product.Specs, newPendingEntry.ProductSpecs));
                 if (foundProduct == null)
                     return badResponse;
                 else
@@ -266,9 +294,8 @@ namespace clickdeal.ProductsStock
                 return null;
 
             productsFind = await _productsRepository.GetListAsync(product => product.Id == Guid.Parse(input.ProductId));
-            productsFind = productsFind.Where(product => product.AreSpecsEqual(product.Specs, input.Specs)).ToList();
             
-            // there is no product with that Id and Specs
+            // there is no product with that Id
             if (productsFind == null || productsFind.Count == 0)
                 return null;
 

@@ -35,7 +35,7 @@ public class Product : AuditedAggregateRoot<Guid>
     // serialized JSON holding different characteristics of the product
     public string Specs { get; set; } = string.Empty;
 
-    public bool AreSpecsEqual(string specs1, string specs2)
+    public static bool AreSpecsEqual(string specs1, string specs2)
     {
         if (specs1 == string.Empty && specs2 == string.Empty)
             return true;
