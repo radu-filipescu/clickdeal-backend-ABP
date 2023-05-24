@@ -133,6 +133,11 @@ namespace clickdeal.ProductsStock
         [AllowAnonymous]
         public async Task<CheckoutCartResponse> CheckoutCart(ShoppingCartDTO input)
         {
+
+            // 0. First check if are there any pending orders which expired 
+            // (those products should be placed back in their stocks)
+            await RefreshPendingOrdersInternal();
+
             // 1. Some sanity checks for input 
 
             CheckoutCartResponse badResponse = new CheckoutCartResponse { Success = false };
@@ -191,10 +196,6 @@ namespace clickdeal.ProductsStock
 
             // now we check if the client's products are available
 
-            // 2. First check if are there any pending orders which expired 
-            // (those products should be placed back in their stocks)
-            await RefreshPendingOrdersInternal();
-
             // 3. After checking the pending orders and updating products stocks
             // we can now check if the current shopping cart is valid
             bool notEnough = false;
@@ -250,8 +251,8 @@ namespace clickdeal.ProductsStock
                 newPendingEntry.Quantity = pendingStock.Item2;
 
                 // find pricePerUnit of that product
-                var foundProduct = await _productsRepository.FirstOrDefaultAsync(product => product.Id == newPendingEntry.ProductId && 
-                                                                            Product.AreSpecsEqual(product.Specs, newPendingEntry.ProductSpecs));
+                var foundProduct = await _productsRepository.FirstOrDefaultAsync(product => product.Id == newPendingEntry.ProductId);
+                                                                            
                 if (foundProduct == null)
                     return badResponse;
                 else
@@ -265,7 +266,7 @@ namespace clickdeal.ProductsStock
             double deliveryCost = (await GetDeliveryCostAsync()).Cost;
 
             newPendingOrder.DeliveryCost = deliveryCost;
-            newPendingOrder.TotalCost = deliveryCost;
+            newPendingOrder.TotalCost += deliveryCost;
 
             // add this order to pending ones
             var result = await _pendingOrdersRepository.InsertAsync(newPendingOrder);
