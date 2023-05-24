@@ -30,5 +30,7 @@ namespace clickdeal.Products
 
         // serialized JSON holding different characteristics of the product
         public string Specs { get; set; } = string.Empty;
+
+        public bool InStock { get; set; }
     }
 }

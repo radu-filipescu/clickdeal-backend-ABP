@@ -1,6 +1,8 @@
 ﻿using clickdeal.Categories;
+using clickdeal.ProductStocks;
 using clickdeal.Reviews;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Polly.Caching;
 using System;
 using System.Collections;
@@ -29,14 +31,16 @@ namespace clickdeal.Products
     {
         private readonly IRepository<Product> _productsRepository;
         private readonly IRepository<Category> _categoriesRepository;
+        private readonly IRepository<ProductStock> _productsStockRepository;
         private readonly IBlobContainer _blobContainer;
 
-        public ProductAppService(IRepository<Product, Guid> repository, IRepository<Category, Guid> categoriesRepository, IBlobContainer blobContainer)
+        public ProductAppService(IRepository<Product, Guid> repository, IRepository<Category, Guid> categoriesRepository, IRepository<ProductStock, Guid> productStockRepository, IBlobContainer blobContainer)
             : base(repository)
         {
             _productsRepository = repository;
             _categoriesRepository = categoriesRepository;
             _blobContainer = blobContainer;
+            _productsStockRepository = productStockRepository;
         }
 
         [Authorize("clickdeal.Admin")]
@@ -292,6 +296,45 @@ namespace clickdeal.Products
             }
 
             return result;
+        }
+
+        public class InStockResponseDTO
+        {
+            public bool InStock { get; set;}
+        }
+
+        public class InStockRequestDTO
+        {
+            public string ProductId { get; set; } = string.Empty;
+
+            public string Specs { get; set; } = string.Empty;
+        }
+
+        [IgnoreAntiforgeryToken]
+        public async Task<InStockResponseDTO> IsProductInStock(InStockRequestDTO input)
+        {
+            InStockResponseDTO nope = new InStockResponseDTO
+            {
+                InStock = false,
+            };
+            
+            Guid productId;
+
+            var convertResult = Guid.TryParse(input.ProductId, out productId);
+
+            if (!convertResult)
+                return nope;
+
+            var result = await _productsStockRepository.GetListAsync(stock => stock.ProductId == productId);
+            var result2 = result.FirstOrDefault(stock => Product.AreSpecsEqual(stock.ProductSpecs, input.Specs));
+
+            if (result2 == null)
+                return nope;
+
+            if (result2.TotalUnits >= 1)
+                return new InStockResponseDTO { InStock = true };
+
+            return nope;
         }
     }
 

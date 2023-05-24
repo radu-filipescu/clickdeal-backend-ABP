@@ -55,7 +55,7 @@ namespace clickdeal.Reviews
             public string productId { get; set; } = string.Empty;
         }
 
-        public async Task<IEnumerable<ReviewDTO>> GetReviewsForProduct(ProductReviewsByIdDTO input)
+        public async Task<IEnumerable<ReviewDTO>?> GetReviewsForProduct(ProductReviewsByIdDTO input)
         {
             // TODO: only return approved reviews for the product
 

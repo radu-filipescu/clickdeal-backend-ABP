@@ -7,7 +7,7 @@ namespace clickdeal.ProductsStock
 {
     public class ProductStockDTO : AuditedEntityDto<Guid>
     {
-        public string ProductId { get; set; }
+        public string ProductId { get; set; } = string.Empty;
         public string ProductSpecs { get; set; } = string.Empty;
         public int TotalUnits { get; set; }
     }

@@ -43,12 +43,24 @@ public class Product : AuditedAggregateRoot<Guid>
         var obj1 = JsonConvert.DeserializeObject<Dictionary<string, string>>(specs1);
         var obj2 = JsonConvert.DeserializeObject<Dictionary<string, string>>(specs2);
 
-
         if (obj1 == null || obj2 == null)
             return false;
 
-        if (obj1.Equals(obj2)) return true;
+        if (obj1.Count != obj2.Count)
+            return false;
 
-        return false;
+        foreach(KeyValuePair<string, string> entry in obj1)
+        {
+            if(!obj2.ContainsKey(entry.Key) || obj2.GetOrDefault(entry.Key) != entry.Value)
+                return false;
+        }
+
+        foreach (KeyValuePair<string, string> entry in obj2)
+        {
+            if (!obj1.ContainsKey(entry.Key) || obj1.GetOrDefault(entry.Key) != entry.Value)
+                return false;
+        }
+
+        return true;
     }
 }
