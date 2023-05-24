@@ -2,6 +2,7 @@
 using clickdeal.Products;
 using clickdeal.ProductStocks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Formats.Tar;
@@ -126,6 +127,8 @@ namespace clickdeal.ProductsStock
             public bool UserAlreadyHasPendingOrder;
         }
 
+        [IgnoreAntiforgeryToken]
+        [AllowAnonymous]
         public async Task<CheckoutCartResponse> CheckoutCart(ShoppingCartDTO input)
         {
             // 1. Some sanity checks for input 

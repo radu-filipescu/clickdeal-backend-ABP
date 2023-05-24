@@ -42,7 +42,8 @@ namespace clickdeal.UserProfile
 
         public class EditUserProfileResponseDTO
         {
-            public bool Result { get; set; }
+            public bool Success { get; set; }
+            public string Message { get; set; } = string.Empty;
         }
 
         [IgnoreAntiforgeryToken]
@@ -50,21 +51,36 @@ namespace clickdeal.UserProfile
         {
             // TODO: validations !!!
             
-            EditUserProfileResponseDTO badResponse = new EditUserProfileResponseDTO();
-            badResponse.Result = false;
+            EditUserProfileResponseDTO badResponse = new EditUserProfileResponseDTO { Success = false };
 
             if (input == null)
+            {
+                badResponse.Message = "invalid input";
                 return badResponse;
+            }
 
             Guid? userId = _currentUser.Id;
 
             if (userId == null)
+            {
+                badResponse.Message = "error on current session";
                 return badResponse;
+            }
 
             IdentityUser currentUser = await _userManager.GetByIdAsync((Guid)userId);
 
             if (input.Username != null && input.Username.Length > 0)
+            {
+                var sameUsername = _userManager.FindByNameAsync(input.Username);
+
+                if (sameUsername != null)
+                {
+                    badResponse.Message = "username already taken";
+                    return badResponse;
+                }
+
                 await _userManager.SetUserNameAsync(currentUser, input.Username);
+            }
 
             if (input.Name != null && input.Name.Length > 0)
                 currentUser.Name = input.Name;
@@ -78,7 +94,7 @@ namespace clickdeal.UserProfile
             var result = await _userManager.UpdateAsync(currentUser);
 
             EditUserProfileResponseDTO goodResponse = new EditUserProfileResponseDTO();
-            goodResponse.Result = true;
+            goodResponse.Success = true;
 
             return goodResponse;
         }
