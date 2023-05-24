@@ -265,8 +265,8 @@ namespace clickdeal.ProductsStock
             if (productsFind == null || productsFind.Count == 0)
                 return null;
 
-            productsFind = await _productsRepository.GetListAsync(product => product.Id == Guid.Parse(input.ProductId) &&
-                                                                    product.AreSpecsEqual(product.Specs, input.Specs));
+            productsFind = await _productsRepository.GetListAsync(product => product.Id == Guid.Parse(input.ProductId));
+            productsFind = productsFind.Where(product => product.AreSpecsEqual(product.Specs, input.Specs)).ToList();
             
             // there is no product with that Id and Specs
             if (productsFind == null || productsFind.Count == 0)

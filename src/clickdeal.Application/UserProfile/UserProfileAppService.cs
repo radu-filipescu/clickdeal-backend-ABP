@@ -69,9 +69,9 @@ namespace clickdeal.UserProfile
 
             IdentityUser currentUser = await _userManager.GetByIdAsync((Guid)userId);
 
-            if (input.Username != null && input.Username.Length > 0)
+            if (input.Username != null && input.Username.Length > 0 && input.Username != _currentUser.UserName)
             {
-                var sameUsername = _userManager.FindByNameAsync(input.Username);
+                var sameUsername = await _userManager.FindByNameAsync(input.Username);
 
                 if (sameUsername != null)
                 {
@@ -82,13 +82,13 @@ namespace clickdeal.UserProfile
                 await _userManager.SetUserNameAsync(currentUser, input.Username);
             }
 
-            if (input.Name != null && input.Name.Length > 0)
+            if (input.Name != null && input.Name.Length > 0 && input.Name != currentUser.Name)
                 currentUser.Name = input.Name;
 
-            if (input.Surname != null && input.Surname.Length > 0)
+            if (input.Surname != null && input.Surname.Length > 0 && input.Surname != currentUser.Surname)
                 currentUser.Surname = input.Surname;
 
-            if (input.PhoneNumber != null && input.PhoneNumber.Length > 0)
+            if (input.PhoneNumber != null && input.PhoneNumber.Length > 0 && input.PhoneNumber != currentUser.PhoneNumber)
                 await _userManager.SetPhoneNumberAsync(currentUser, input.PhoneNumber);
 
             var result = await _userManager.UpdateAsync(currentUser);
