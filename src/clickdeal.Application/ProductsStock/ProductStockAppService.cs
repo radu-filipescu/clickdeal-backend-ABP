@@ -293,12 +293,6 @@ namespace clickdeal.ProductsStock
             if (productsFind == null || productsFind.Count == 0)
                 return null;
 
-            productsFind = await _productsRepository.GetListAsync(product => product.Id == Guid.Parse(input.ProductId));
-            
-            // there is no product with that Id
-            if (productsFind == null || productsFind.Count == 0)
-                return null;
-
             // get all stocks with that productId
             var stockFindAll = await _productStockRepository.GetListAsync(stock => stock.ProductId == Guid.Parse(input.ProductId) && stock.IsDeleted == false);
 
@@ -307,7 +301,7 @@ namespace clickdeal.ProductsStock
                 return null;
 
             // get all stocks with those specs
-            var stockFindWithSpecs = stockFindAll.FirstOrDefault(stock => stock.AreSpecsEqual(stock.ProductSpecs, input.Specs));
+            var stockFindWithSpecs = stockFindAll.FirstOrDefault(stock => Product.AreSpecsEqual(stock.ProductSpecs, input.Specs));
 
             // there is no stock with that productId and those specs
             if (stockFindWithSpecs == null)
@@ -346,7 +340,7 @@ namespace clickdeal.ProductsStock
             if (result.ProductId.ToString() != input.ProductId)
                 return false;
 
-            if (result.AreSpecsEqual(input.Specs, result.ProductSpecs) == false)
+            if (Product.AreSpecsEqual(input.Specs, result.ProductSpecs) == false)
                 return false;
 
             // everything was ok
@@ -409,7 +403,7 @@ namespace clickdeal.ProductsStock
                         }
                            
 
-                        if (correspondingStock.AreSpecsEqual(correspondingStock.ProductSpecs, currentSpecs) == false)
+                        if (Product.AreSpecsEqual(correspondingStock.ProductSpecs, currentSpecs) == false)
                         {
                             pendingOrderRemoveError = true;
                             continue;
