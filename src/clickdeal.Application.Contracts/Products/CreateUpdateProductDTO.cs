@@ -6,6 +6,10 @@ namespace clickdeal.Products
 {
     public class CreateUpdateProductDTO
     {
+        public string ProductId { get; set; } = string.Empty;
+
+        public string CodIdentificareSmartBill { get; set; } = string.Empty;
+
         public string Name { get; set; } = string.Empty;
 
         public double Price { get; set; }
@@ -16,15 +20,12 @@ namespace clickdeal.Products
 
         public string DescriptionLong { get; set; } = string.Empty;
 
-        // information table with this convention  key:value  title*
-        public string Information { get; set; } = string.Empty;
-
         public string Brand { get; set; } = string.Empty;
 
         // all the product's categories names, starting and ending with #, and separated by #
         public string Categories { get; set; } = string.Empty;
 
-        // serialized JSON holding different characteristics of the product
-        public string Specs { get; set; } = string.Empty;
+        public bool IsVisible { get; set; }
+
     }
 }

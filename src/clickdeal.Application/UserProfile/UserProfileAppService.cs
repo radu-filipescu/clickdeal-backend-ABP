@@ -50,7 +50,7 @@ namespace clickdeal.UserProfile
         public async Task<EditUserProfileResponseDTO> EditUserProfile(EditUserProfileDTO input)
         {
             // TODO: validations !!!
-            
+
             EditUserProfileResponseDTO badResponse = new EditUserProfileResponseDTO { Success = false };
 
             if (input == null)
@@ -69,7 +69,7 @@ namespace clickdeal.UserProfile
 
             IdentityUser currentUser = await _userManager.GetByIdAsync((Guid)userId);
 
-            if (input.Username != null && input.Username.Length > 0 && input.Username != _currentUser.UserName)
+            if (input.Username != null && input.Username.Length > 0 && input.Username != _currentUser.UserName && input.Username.ToLower() != "admin")
             {
                 var sameUsername = await _userManager.FindByNameAsync(input.Username);
 

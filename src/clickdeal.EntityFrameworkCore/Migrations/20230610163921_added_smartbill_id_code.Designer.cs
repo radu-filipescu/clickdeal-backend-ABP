@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using clickdeal.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using clickdeal.EntityFrameworkCore;
 namespace clickdeal.Migrations
 {
     [DbContext(typeof(clickdealDbContext))]
-    partial class clickdealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230610163921_added_smartbill_id_code")]
+    partial class addedsmartbillidcode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2045,6 +2048,10 @@ namespace clickdeal.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("ExtraProperties");
 
+                    b.Property<string>("Information")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("LastModificationTime");
@@ -2058,7 +2065,11 @@ namespace clickdeal.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("varchar(128)");
 
-                    b.Property<string>("PhotoPaths")
+                    b.Property<string>("PhotoPath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhotoPathSmall")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -2068,19 +2079,9 @@ namespace clickdeal.Migrations
                     b.Property<double>("PriceDiscount")
                         .HasColumnType("double");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SmartbillProductName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Specs")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("VisibleOnWebsite")
-                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 

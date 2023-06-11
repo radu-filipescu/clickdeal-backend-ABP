@@ -7,6 +7,10 @@ namespace clickdeal.Products
 {
     public class ProductDTO : AuditedEntityDto<Guid>
     {
+        public string CodIdentificareSmartbill { get; set; } = string.Empty;
+
+        public string SmartbillName { get; set; } = string.Empty;
+        
         public string Name { get; set; } = string.Empty;
 
         public double Price { get; set; }
@@ -21,8 +25,6 @@ namespace clickdeal.Products
 
         public string DescriptionLong { get; set; } = string.Empty;
 
-        public string Information { get; set; } = string.Empty;
-
         public string Brand { get; set; } = string.Empty;
 
         // all the product's categories, separated by #
@@ -31,6 +33,8 @@ namespace clickdeal.Products
         // serialized JSON holding different characteristics of the product
         public string Specs { get; set; } = string.Empty;
 
-        public bool InStock { get; set; }
+        public int Quantity { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }

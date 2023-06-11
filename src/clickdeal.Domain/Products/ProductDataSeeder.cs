@@ -18,22 +18,20 @@ public class ProductDataSeeder : IDataSeedContributor, ITransientDependency
 
     public async Task SeedAsync(DataSeedContext context)
     {
-        if (await _productRepository.GetCountAsync() <= 0)
-        {
-            await _productRepository.InsertAsync(
-                new Product
-                {
-                    Name = "suport auto telefon",
-                    Price = 50,
-                    DescriptionShort = "suport de lipit pe parbriz pentru telefonul tau",
-                    DescriptionLong = "",
-                    PhotoPath = "nah",
-                    PhotoPathSmall = "nah-small",
-                    Categories = "auto#electronice#telefoane",
-                    Specs = "to-do-next"
-                },
-                autoSave: true
-            );
-        }
+        //if (await _productRepository.GetCountAsync() <= 0)
+        //{
+        //    await _productRepository.InsertAsync(
+        //        new Product
+        //        {
+        //            Name = "suport auto telefon",
+        //            Price = 50,
+        //            DescriptionShort = "suport de lipit pe parbriz pentru telefonul tau",
+        //            DescriptionLong = "",
+        //            Categories = "auto#electronice#telefoane",
+        //            Specs = "to-do-next"
+        //        },
+        //        autoSave: true
+        //    );
+        //}
     }
 }

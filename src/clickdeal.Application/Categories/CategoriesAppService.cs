@@ -157,7 +157,19 @@ namespace clickdeal.Categories
         [Authorize("clickdeal.Admin")]
         public override async Task DeleteAsync(Guid id)
         {
+            // DISABLED
             await base.DeleteAsync(id);
+        }
+
+        public class DeleteCategoryDTO
+        {
+            public string CategoryName { get; set; } = string.Empty;
+        }
+
+        [Authorize("clickdeal.Admin")]
+        public async Task DeleteCategoryByNameAsync(DeleteCategoryDTO input)
+        {
+            await _categoriesRepository.DeleteAsync(category => category.Name == input.CategoryName);
         }
 
         [Authorize("clickdeal.Admin")]
