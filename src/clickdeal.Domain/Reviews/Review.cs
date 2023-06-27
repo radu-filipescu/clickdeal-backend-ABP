@@ -11,6 +11,8 @@ namespace clickdeal.Reviews
     {
         public Guid UserId { get; set; }
         public Guid ProductId { get; set; }
+
+        public string SmartbillId { get; set; }
         public string ReviewUsername { get; set; } = string.Empty;
         public int NumberOfStars { get; set; }
         public string Title { get; set; }

@@ -1,4 +1,5 @@
 ﻿using clickdeal.Permissions;
+using clickdeal.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Identity;
+using Volo.Abp.Json.SystemTextJson.JsonConverters;
 using Volo.Abp.Threading;
 using Volo.Abp.Validation;
 
@@ -26,24 +28,35 @@ namespace clickdeal.Reviews
     IReviewAppService //implement the IReviewAppService
     {
         private readonly IRepository<Review> _reviewsRepository;
+        private readonly IRepository<Product> _productRepository;
 
-        public ReviewAppService(IRepository<Review, Guid> repository)
+        public ReviewAppService(IRepository<Review, Guid> repository, IRepository<Product, Guid> productRepository)
         : base(repository)
         {
             _reviewsRepository = repository;
+            _productRepository = productRepository;
         }
 
         [Authorize]
         [IgnoreAntiforgeryToken]
         public async override Task<ReviewDTO> CreateAsync(CreateUpdateReviewDTO input)
         {
+            var exists = await _productRepository.FirstOrDefaultAsync(product => product.Id == input.ProductId);
+
+            if (exists == null || input.NumberOfStars < 1 || input.NumberOfStars > 5)
+            {
+                return new ReviewDTO();
+            }
+
             Review newReview = new Review();
 
             newReview.ReviewUsername = input.ReviewUsername;
+            newReview.SmartbillId = exists.CodIdentificareSmartbill;
             newReview.Title = "";
             newReview.Content = input.Content;
             newReview.NumberOfStars = input.NumberOfStars;
             newReview.ProductId = input.ProductId;
+            newReview.Approved = false;
 
             var result = await _reviewsRepository.InsertAsync(newReview);
 
@@ -57,16 +70,13 @@ namespace clickdeal.Reviews
 
         public async Task<IEnumerable<ReviewDTO>?> GetReviewsForProduct(ProductReviewsByIdDTO input)
         {
-            // TODO: only return approved reviews for the product
-
             Guid productId;
             bool valid = Guid.TryParse(input.productId, out productId);
 
             if (!valid)
                 return null;
 
-            var result = await _reviewsRepository.GetListAsync(review => review.ProductId == productId);
-
+            var result = await _reviewsRepository.GetListAsync(review => review.ProductId == productId && review.Approved == true);
 
             List<ReviewDTO> resultDTOs = new List<ReviewDTO>();
 
@@ -82,6 +92,45 @@ namespace clickdeal.Reviews
             }
 
             return resultDTOs;
+        }
+
+        [Authorize("clickdeal.Admin")]
+        public async Task<List<Review>> GetPendingReviews()
+        {
+            var result = await _reviewsRepository.GetListAsync(review => review.Approved == false);
+
+            return result;
+        }
+
+        public class ApproveOrDeleteReviewDTO
+        {
+            public string ReviewId { get; set; } = string.Empty;
+            public bool Approve { get; set; }
+            public bool Delete { get; set; }
+        }
+
+        [Authorize("clickdeal.Admin")]
+        [IgnoreAntiforgeryToken]
+        public async Task ApproveOrDeleteReview(ApproveOrDeleteReviewDTO input)
+        {
+            Guid reviewIdParsed;
+            bool valid = Guid.TryParse(input.ReviewId, out reviewIdParsed);
+
+            if (!valid)
+                return;
+
+            var result = await _reviewsRepository.FirstOrDefaultAsync(review => review.Id == reviewIdParsed);
+
+            if(input.Approve == true)
+            {
+                result.Approved = true;
+                await _reviewsRepository.UpdateAsync(result);
+            }
+            else 
+                if(input.Delete == true)
+                {
+                    await _reviewsRepository.DeleteAsync(result);
+                }
         }
 
         [Authorize("clickdeal.Admin")]

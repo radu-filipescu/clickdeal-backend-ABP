@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 using clickdeal.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using clickdeal.EntityFrameworkCore;
 namespace clickdeal.Migrations
 {
     [DbContext(typeof(clickdealDbContext))]
-    partial class clickdealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230611170228_incauna")]
+    partial class incauna
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2127,10 +2130,6 @@ namespace clickdeal.Migrations
                         .HasColumnType("char(36)");
 
                     b.Property<string>("ReviewUsername")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("SmartbillId")
                         .IsRequired()
                         .HasColumnType("longtext");
 

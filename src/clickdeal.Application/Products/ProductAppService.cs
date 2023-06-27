@@ -314,6 +314,85 @@ namespace clickdeal.Products
             {
                 ProductDTO newProductDTO = new ProductDTO();
 
+                newProductDTO.Name = prod.Name;
+                newProductDTO.Price = prod.Price;
+                newProductDTO.PriceDiscount = prod.PriceDiscount;
+                newProductDTO.ProductId = prod.Id.ToString();
+                newProductDTO.DescriptionShort = prod.DescriptionShort;
+                newProductDTO.DescriptionLong = prod.DescriptionLong;
+                newProductDTO.Brand = prod.Brand;
+                newProductDTO.Categories = prod.Categories;
+                newProductDTO.Specs = prod.Specs;
+                newProductDTO.Image = prod.PhotoPaths;
+
+                mappedResult.Add(newProductDTO);
+            }
+
+
+            foreach(var product in mappedResult)
+            {
+                var productImage = await _blobContainer.GetAllBytesOrNullAsync(product.ProductId.ToString());
+                if (productImage == null)
+                    continue;
+
+                product.Image = System.Text.Encoding.UTF8.GetString(productImage);
+            }
+
+            return mappedResult;
+        }
+
+        [Authorize("clickdeal.Admin")]
+        public async Task<List<ProductDTO>> GetProductsFilteredAdmin(FilteredProductsRequestDTO input)
+        {
+            await RefreshCategories();
+            
+            // filtering products
+            var entitiesQuery = await _productsRepository.GetQueryableAsync();
+
+            if (input.PriceMin != null)
+                entitiesQuery = entitiesQuery.Where(product => product.Price >= input.PriceMin);
+
+            if (input.PriceMax != null)
+                entitiesQuery = entitiesQuery.Where(product => product.Price <= input.PriceMax);
+
+            if (input.Brand != null)
+                entitiesQuery = entitiesQuery.Where(product => product.Brand == input.Brand);
+
+            if (input.Category != null && input.Category.Length > 0)
+                entitiesQuery = entitiesQuery.Where(product => product.Categories.Contains(input.Category));
+
+            if (input.MinDiscount != null && input.MinDiscount > 0.5)
+                entitiesQuery = entitiesQuery.Where(product => product.PriceDiscount >= input.MinDiscount);
+
+
+            if (input.OrderBy != null && input.OrderBy.Length > 0)
+            {
+                if (input.OrderBy == "DATE-ASC")
+                    entitiesQuery = entitiesQuery.OrderBy(product => product.CreationTime);
+
+                if (input.OrderBy == "DATE-DESC")
+                    entitiesQuery = entitiesQuery.OrderByDescending(product => product.CreationTime);
+
+                if (input.OrderBy == "PRICE-ASC")
+                    entitiesQuery = entitiesQuery.OrderBy(product => product.Price);
+
+                if (input.OrderBy == "PRICE-DESC")
+                    entitiesQuery = entitiesQuery.OrderByDescending(product => product.Price);
+            }
+
+            if (input.SkipCount > 0)
+                entitiesQuery = entitiesQuery.Skip(input.SkipCount);
+
+            if (input.MaxResultCount > 0)
+                entitiesQuery = entitiesQuery.Take(input.MaxResultCount);
+
+            var result = entitiesQuery.ToList();
+            List<ProductDTO> mappedResult = new List<ProductDTO>();
+
+            foreach (var prod in result)
+            {
+                ProductDTO newProductDTO = new ProductDTO();
+
                 newProductDTO.CodIdentificareSmartbill = prod.CodIdentificareSmartbill;
                 newProductDTO.SmartbillName = prod.SmartbillProductName;
                 newProductDTO.Name = prod.Name;
@@ -333,7 +412,7 @@ namespace clickdeal.Products
             }
 
 
-            foreach(var product in mappedResult)
+            foreach (var product in mappedResult)
             {
                 var productImage = await _blobContainer.GetAllBytesOrNullAsync(product.ProductId.ToString());
                 if (productImage == null)
@@ -375,11 +454,61 @@ namespace clickdeal.Products
 
             var result2 = await _productsRepository.UpdateAsync(product);
 
+            await RefreshCategories();
+
             var success = new ProductDTO();
             success.Name = "Editing succesful!";
 
             return success;
         }
+
+        private async Task RefreshCategories()
+        {
+            List<Category> allCategories = (await _categoriesRepository.GetQueryableAsync()).Where(category => true).ToList();
+            List<Product> allProducts = (await _productsRepository.GetQueryableAsync()).Where(product => product.VisibleOnWebsite).ToList();
+
+            for(int i = 0; i < allCategories.Count(); i++)
+            {
+                allCategories[i].ProductsNumber = 0;
+
+                await _categoriesRepository.UpdateAsync(allCategories[i]);
+            }
+
+            for(int i = 0; i < allProducts.Count(); i++)
+            {
+                if (allProducts[i].Categories.IsNullOrEmpty())
+                    continue;
+                
+                string[] categories = allProducts[i].Categories.Split("#");
+                List<string> goodCategories = new List<string>();
+
+                for (int j = 0; j < categories.Length; j++)
+                {
+                    if (categories[j].IsNullOrEmpty())
+                        continue;
+
+                    var categoryResult = await _categoriesRepository.FirstOrDefaultAsync(cat => cat.Name == categories[j]);
+
+                    if (categoryResult == null)
+                        continue;
+
+                    // add new product to category
+                    categoryResult.ProductsNumber++;
+
+                    await _categoriesRepository.UpdateAsync(categoryResult);
+                    goodCategories.Add(categories[j]);
+                }
+
+                if (goodCategories.Count > 0)
+                {
+                    string categoryField = "#" + String.Join("#", goodCategories) + "#";
+
+                    allProducts[i].Categories = categoryField;
+                    await _productsRepository.UpdateAsync(allProducts[i]);
+                }
+            }
+        }
+
 
         [Authorize("clickdeal.Admin")]
         public override async Task DeleteAsync(Guid id)
@@ -425,6 +554,9 @@ namespace clickdeal.Products
             resultDTO.Specs = result.Specs;
             resultDTO.ProductId = result.Id.ToString();
             resultDTO.PriceDiscount = result.PriceDiscount;
+
+            if (result.Quantity > 0)
+                resultDTO.Quantity = 1;
 
             return resultDTO;
         }

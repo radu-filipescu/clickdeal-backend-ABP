@@ -101,7 +101,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "Reviews",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Title).IsRequired().HasMaxLength(128);
+            b.Property(x => x.Title).IsRequired();
         });
 
         builder.Entity<Product>(b =>
@@ -109,7 +109,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "Products",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            b.Property(x => x.Name).IsRequired();
         });
 
         builder.Entity<ProductStock>(b =>
@@ -117,7 +117,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "ProductsStock",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.ProductId).IsRequired().HasMaxLength(128);
+            b.Property(x => x.ProductId).IsRequired();
         });
 
         builder.Entity<ProductStock>(b =>
@@ -125,7 +125,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "ProductsStock",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.ProductId).IsRequired().HasMaxLength(128);
+            b.Property(x => x.ProductId).IsRequired();
         });
 
         builder.Entity<Category>(b =>
@@ -133,7 +133,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "Categories",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            b.Property(x => x.Name).IsRequired();
         });
 
         builder.Entity<PendingOrder>(b =>
@@ -141,7 +141,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "PendingOrders",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.CustomerEmail).IsRequired().HasMaxLength(128);
+            b.Property(x => x.CustomerEmail).IsRequired();
         });
 
         builder.Entity<CustomerOrder>(b =>
@@ -149,7 +149,7 @@ public class clickdealDbContext :
             b.ToTable(clickdealConsts.DbTablePrefix + "OrdersHistory",
                 clickdealConsts.DbSchema);
             b.ConfigureByConvention(); //auto configure for the base class props
-            b.Property(x => x.CustomerEmail).IsRequired().HasMaxLength(128);
+            b.Property(x => x.CustomerEmail).IsRequired();
         });
     }
 }

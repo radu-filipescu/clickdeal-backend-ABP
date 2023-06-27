@@ -94,6 +94,22 @@ namespace clickdeal.Categories
             return await base.GetListAsync(input);
         }
 
+        public class FrontPageImagesDTO
+        {
+            public string Image1 { get; set; } = string.Empty;
+            public string Image2 { get; set; } = string.Empty;
+            public string Image3 { get; set; } = string.Empty;
+            public string Image4 { get; set; } = string.Empty;
+            public string Image5 { get; set; } = string.Empty;
+        }
+
+        public async Task<FrontPageImagesDTO> GetFrontPageImages()
+        {
+            // TODO:
+            return new FrontPageImagesDTO();
+            //System.IO.File.ReadAllText("MyTextFile.txt");
+        }
+
         public async Task<List<CategoryDTO>> GetAllCategoriesAsync()
         {
             List<Category> primaryCategories = await _categoriesRepository.GetListAsync();
