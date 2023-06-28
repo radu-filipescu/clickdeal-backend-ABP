@@ -131,7 +131,7 @@ namespace clickdeal.Products
         }
 
         [Authorize("clickdeal.Admin")]
-        public async Task SyncProductsWithSmartbill(CreateUpdateProductDTO input)
+        public async Task SyncProductsWithSmartbill()
         {
             // THIS SHOULD SYNC PRODUCTS WITH SMARTBILL
             var todayDate = DateTime.Now.ToString("yyyy-MM-dd");
